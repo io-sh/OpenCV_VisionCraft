@@ -105,6 +105,7 @@ namespace openCV0820
             this.circleBTN = new System.Windows.Forms.RibbonButton();
             this.ribbonButton7 = new System.Windows.Forms.RibbonButton();
             this.ribbonButton8 = new System.Windows.Forms.RibbonButton();
+            this.squareBTN = new System.Windows.Forms.RibbonButton();
             this.ribbonPanel12 = new System.Windows.Forms.RibbonPanel();
             this.hsvBTN = new System.Windows.Forms.RibbonButton();
             this.ribbonTab3 = new System.Windows.Forms.RibbonTab();
@@ -113,6 +114,8 @@ namespace openCV0820
             this.ribbonPanel11 = new System.Windows.Forms.RibbonPanel();
             this.percentBTN = new System.Windows.Forms.RibbonButton();
             this.allColorBTN = new System.Windows.Forms.RibbonButton();
+            this.ribbonPanel13 = new System.Windows.Forms.RibbonPanel();
+            this.coinBTN = new System.Windows.Forms.RibbonButton();
             this.camTimer = new System.Windows.Forms.Timer(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -278,7 +281,7 @@ namespace openCV0820
             this.sortPanel.Items.Add(this.symmetryY);
             this.sortPanel.Items.Add(this.symmetryX);
             this.sortPanel.Name = "sortPanel";
-            this.sortPanel.Text = "정렬";
+            this.sortPanel.Text = "반전";
             // 
             // symmetryY
             // 
@@ -535,6 +538,7 @@ namespace openCV0820
             // 
             // ribbonPanel10
             // 
+            this.ribbonPanel10.ButtonMoreVisible = false;
             this.ribbonPanel10.FlowsTo = System.Windows.Forms.RibbonPanelFlowDirection.Right;
             this.ribbonPanel10.Items.Add(this.angleCBB);
             this.ribbonPanel10.Name = "ribbonPanel10";
@@ -635,7 +639,7 @@ namespace openCV0820
             this.ribbonPanel5.FlowsTo = System.Windows.Forms.RibbonPanelFlowDirection.Left;
             this.ribbonPanel5.Items.Add(this.affineBTN);
             this.ribbonPanel5.Name = "ribbonPanel5";
-            this.ribbonPanel5.Text = "좌표";
+            this.ribbonPanel5.Text = "변환";
             // 
             // affineBTN
             // 
@@ -643,7 +647,7 @@ namespace openCV0820
             this.affineBTN.LargeImage = ((System.Drawing.Image)(resources.GetObject("affineBTN.LargeImage")));
             this.affineBTN.Name = "affineBTN";
             this.affineBTN.SmallImage = ((System.Drawing.Image)(resources.GetObject("affineBTN.SmallImage")));
-            this.affineBTN.Text = "아핀변환";
+            this.affineBTN.Text = "기하학적";
             this.affineBTN.Click += new System.EventHandler(this.affineBTN_Click);
             // 
             // ribbonPanel7
@@ -756,6 +760,7 @@ namespace openCV0820
             this.ribbonPanel9.ButtonMoreVisible = false;
             this.ribbonPanel9.FlowsTo = System.Windows.Forms.RibbonPanelFlowDirection.Left;
             this.ribbonPanel9.Items.Add(this.circleBTN);
+            this.ribbonPanel9.Items.Add(this.squareBTN);
             this.ribbonPanel9.Name = "ribbonPanel9";
             this.ribbonPanel9.Text = "모형";
             // 
@@ -786,6 +791,15 @@ namespace openCV0820
             this.ribbonButton8.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButton8.SmallImage")));
             this.ribbonButton8.Text = "ribbonButton8";
             // 
+            // squareBTN
+            // 
+            this.squareBTN.Image = ((System.Drawing.Image)(resources.GetObject("squareBTN.Image")));
+            this.squareBTN.LargeImage = ((System.Drawing.Image)(resources.GetObject("squareBTN.LargeImage")));
+            this.squareBTN.Name = "squareBTN";
+            this.squareBTN.SmallImage = ((System.Drawing.Image)(resources.GetObject("squareBTN.SmallImage")));
+            this.squareBTN.Text = "사각";
+            this.squareBTN.Click += new System.EventHandler(this.squareBTN_Click);
+            // 
             // ribbonPanel12
             // 
             this.ribbonPanel12.ButtonMoreVisible = false;
@@ -808,6 +822,7 @@ namespace openCV0820
             this.ribbonTab3.Name = "ribbonTab3";
             this.ribbonTab3.Panels.Add(this.ribbonPanel4);
             this.ribbonTab3.Panels.Add(this.ribbonPanel11);
+            this.ribbonTab3.Panels.Add(this.ribbonPanel13);
             this.ribbonTab3.Text = "응용";
             // 
             // ribbonPanel4
@@ -852,6 +867,21 @@ namespace openCV0820
             this.allColorBTN.SmallImage = ((System.Drawing.Image)(resources.GetObject("allColorBTN.SmallImage")));
             this.allColorBTN.Text = "전체";
             this.allColorBTN.Click += new System.EventHandler(this.allColorBTN_Click);
+            // 
+            // ribbonPanel13
+            // 
+            this.ribbonPanel13.Items.Add(this.coinBTN);
+            this.ribbonPanel13.Name = "ribbonPanel13";
+            this.ribbonPanel13.Text = "동전 검출";
+            // 
+            // coinBTN
+            // 
+            this.coinBTN.Image = ((System.Drawing.Image)(resources.GetObject("coinBTN.Image")));
+            this.coinBTN.LargeImage = ((System.Drawing.Image)(resources.GetObject("coinBTN.LargeImage")));
+            this.coinBTN.Name = "coinBTN";
+            this.coinBTN.SmallImage = ((System.Drawing.Image)(resources.GetObject("coinBTN.SmallImage")));
+            this.coinBTN.Text = "CoinBTN";
+            this.coinBTN.Click += new System.EventHandler(this.coinBTN_Click);
             // 
             // camTimer
             // 
@@ -1087,6 +1117,9 @@ namespace openCV0820
         private System.Windows.Forms.RibbonButton angle270BTN;
         private System.Windows.Forms.RibbonOrbMenuItem savefileBTN;
         private System.Windows.Forms.Timer videoTimer;
+        private System.Windows.Forms.RibbonPanel ribbonPanel13;
+        private System.Windows.Forms.RibbonButton coinBTN;
+        private System.Windows.Forms.RibbonButton squareBTN;
     }
 }
 

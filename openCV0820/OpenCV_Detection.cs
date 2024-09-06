@@ -23,7 +23,6 @@ namespace openCV0820
         Bitmap tesser;
         Mat circle;
         Mat color;
-        
 
 
         public Mat Canny(Mat src)
@@ -43,7 +42,7 @@ namespace openCV0820
             else Cv2.CopyTo(src, gray);
 
             Point2f[] corners;
-            corners = Cv2.GoodFeaturesToTrack(gray, 100, 0.03, size, null, 3, false, 0);
+            corners = Cv2.GoodFeaturesToTrack(gray, 100, 0.03, size, null, 5, false, 0);
 
             for (int i = 0; i < corners.Length; i++)
             {
@@ -90,8 +89,8 @@ namespace openCV0820
             if (src.Channels() != 1) Cv2.CvtColor(src, circle, ColorConversionCodes.BGR2GRAY);
             else Cv2.CopyTo(src, circle);
 
-            //중간에 블러처리 하기 -> 좀더 명확히 원을 검출하기 위해
-            //블러적용안하면 제대로 안나옴
+            //좀 더 명확한 원 검출을 하기 위해서는 블러처리를 할 필요가 있음
+            //블러 처리된 이미지를 사용하거나 중간에 블러처리 실행
 
             CircleSegment[] circles = Cv2.HoughCircles(circle, HoughModes.Gradient, 1, 100, 100, 35, 0, 0);
             for (int i = 0; i < circles.Length; i++)
@@ -103,7 +102,10 @@ namespace openCV0820
             }
             return dst;
         }
-        
+
+        //중간에 블러처리 하기 -> 좀더 명확히 원을 검출하기 위해
+        //블러적용안하면 제대로 안나옴
+
         public Mat Color(Mat src, string srcColor)
         {
             color = new Mat();
@@ -153,7 +155,89 @@ namespace openCV0820
             return color;
         }
         //색상 백분율 검출
+
+       public Mat Square(Mat src)
+        {
+            OpenCvSharp.Point[] square = FindSquare(src);
+            Mat dst = DrawSquare(src, square);
+            return dst;
+        }
+        public static double CalcAngle(OpenCvSharp.Point pt1, OpenCvSharp.Point pt0, OpenCvSharp.Point pt2)
+        {
+            //cos각도 수식
+            double u1 = pt1.X - pt0.X, u2 = pt1.Y - pt0.Y;
+            double v1 = pt2.X - pt0.X, v2 = pt2.Y - pt0.Y;
+
+            double numerator = u1 * v1 + u2 * v2;
+            double dewnominator = Math.Sqrt(u1*u1+u2*u2)*Math.Sqrt(v1*v1+v2*v2);    
+            return numerator / dewnominator;
+        }
+        public OpenCvSharp.Point[] FindSquare(Mat src)
+        {
+            Mat[] split = Cv2.Split(src);//bgr채널 나눈뒤 이진화(정확성을 위해)
+            Mat blur = new Mat();//정확성을 위한 블러와 이진화
+            Mat binary = new Mat();
+            OpenCvSharp.Point[] square = new OpenCvSharp.Point[4];//반환할 포인트
+
+            int N = 10; //이진화 종류(정확성을 위해 임계값을 다르게 이진화를 한다.)
+            double cos = 1; //사각형 각도
+            double max = src.Size().Width * src.Size().Height * 0.9;//입력 이미지의 90%까지의 사각형 이하만 명함으로 인정
+            double min = src.Size().Width * src.Size().Height * 0.1;//10%이상만
+
+            for(int channel =0; channel < 3; channel++)//각채널
+            {
+                Cv2.GaussianBlur(split[channel], blur, new OpenCvSharp.Size(5, 5), 1);//블러처리
+                for(int i = 0; i < N; i++)//이진화10개
+                {
+                    Cv2.Threshold(blur, binary, i * 255 / N, 255, ThresholdTypes.Binary);
+                    //윤곽선검출
+                    OpenCvSharp.Point[][] contours;//찾은윤곽선 저장 리스트(윤곽선은 점들의 리스트로 표현)
+                    HierarchyIndex[] hierarchy;//윤곽선 간 계층 구조(중첩이 어떻게 되어있는지)
+                    Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, 
+                        ContourApproximationModes.ApproxTC89KCOS);
+                    //RetrievalModes.External 윤곽선 검색 종류 : 외곽 윤곽선 검색
+                    //ContourApproximationModes.ApproxTC89KCOS 윤곽선 근사화 방법 : Teh - chin 체인 코드 알고리즘으로
+                    for (int j=0; j<contours.Length; j++)//찾은 윤곽선 수만큼
+                    {
+                        //윤곽선 길이 계산 (윤곽선 구성 점 배열, 폐곡선 여부)
+                        double perimeter = Cv2.ArcLength(contours[j], true);
+                        //윤곽선을 다각형으로 근사화(윤곽선, 길이에 대한 허용 오차, 폐곡선 여부)
+                        OpenCvSharp.Point[] result = Cv2.ApproxPolyDP(contours[j], perimeter * 0.02, true);
+                        //윤곽선 면적 계산
+                        double area = Cv2.ContourArea(result);
+                        //윤곽선이 볼록한지 확인
+                        bool convex = Cv2.IsContourConvex(result);
+
+                        //사각형 검증
+                        if(result.Length == 4&&area> min&& area < max && convex)
+                        {
+                            double[] angles = new double[4];
+                            for(int k =1; k < 5; k++)
+                            {
+                                double angle = Math.Abs(CalcAngle(result[(k - 1) % 4], result[k % 4], result[(k + 1) % 4]));
+                                angles[k-1] = angle;
+                            }
+                            if (angles.Max() < cos && angles.Max() < 0.15)
+                            {
+                                cos=angles.Max();
+                                square = result;
+                            }
+                        }
+                    }
+                }
+            }
+            return square;
+        }
+        public Mat DrawSquare(Mat src, OpenCvSharp.Point[] square)
+        {
+            Mat drawSquare = src.Clone();
+            OpenCvSharp.Point[][] pts = new OpenCvSharp.Point[][] { square};
+            Cv2.Polylines(drawSquare, pts, true, Scalar.Yellow, 3, LineTypes.AntiAlias, 0);
+            return drawSquare;
+        }
+
        
+
         public void Dispose()
         {
             if(canny != null) canny.Dispose();

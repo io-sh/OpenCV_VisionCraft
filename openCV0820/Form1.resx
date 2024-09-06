@@ -162,13 +162,13 @@
   </data>
   <data name="savefileBTN.SmallImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAEwSURBVEhL7dWxK8RhHMfxn0QpmQwGSRbl6mJGyWSX+AOO
-        0X6DU1bh9pPVZKYYDJRSFtTt4u/w/vS7p57hefR7Ht/S5T71qt9wPe/rrueuGOwvN4PZTJPImqJddDwf
-        uMD5D67wikesIXl614r5u8ZI+RhdDW1M4BbJ8arheSz2TMOFtax41bC+jmOc4AZ+WEuOVw3rUG0YobCW
-        FLcMa5Xj1mFN8afyMb5Q+BJ3UMz5wn3PJ3SNjhCbe6PRhcIW64/wCpq/NActKXyKBtYz6Y5vQ0sO18vH
-        rO3CJDyEBejqhLiP1c0srPt4Bt3XkBb8mYVHsYmtiA34MwuPQYftRezAn1l4HAc4jNiHP7OwfpeXsRqx
-        BH9m4dT1R3gK79AL3/AA/TPleMEzdJbOGexfrSi+AQB5gRMTjoRWAAAAAElFTkSuQmCC
+        iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
+        JQAAFiUBSVIk8AAAATBJREFUSEvt1bErxGEcx/GfRCmZDAZJFuXqYkbJZJf4A47RfoNTVuH2k9VkphgM
+        lFIW1O3i7/D+9LunnuF59Hse39LlPvWq33A97+uu564Y7C83g9lMk8iaol10PB+4wPkPrvCKR6wheXrX
+        ivm7xkj5GF0NbUzgFsnxquF5LPZMw4W1rHjVsL6OY5zgBn5YS45XDetQbRihsJYUtwxrlePWYU3xp/Ix
+        vlD4EndQzPnCfc8ndI2OEJt7o9GFwhbrj/AKmr80By0pfIoG1jPpjm9DSw7Xy8es7cIkPIQF6OqEuI/V
+        zSys+3gG3deQFvyZhUexia2IDfgzC49Bh+1F7MCfWXgcBziM2Ic/s7B+l5exGrEEf2bh1PVHeArv0Avf
+        8AD9M+V4wTN0ls4Z7F+tKL4BAHmBExOOhFYAAAAASUVORK5CYII=
 </value>
   </data>
   <data name="camBTN0.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -1407,6 +1407,24 @@
         JQAAFiUBSVIk8AAAABNJREFUOE9jGAWjYBSMAjBgYAAABBAAAadEfGMAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="squareBTN.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
+        JQAAFiUBSVIk8AAAABpJREFUWEftwQEBAAAAgiD/r25IQAAAAMC5GhAgAAGdeElDAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="squareBTN.LargeImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
+        JQAAFiUBSVIk8AAAABpJREFUWEftwQEBAAAAgiD/r25IQAAAAMC5GhAgAAGdeElDAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="squareBTN.SmallImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
+        JQAAFiUBSVIk8AAAABNJREFUOE9jGAWjYBSMAjBgYAAABBAAAadEfGMAAAAASUVORK5CYII=
+</value>
+  </data>
   <data name="hsvBTN.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
@@ -1636,6 +1654,24 @@
 </value>
   </data>
   <data name="allColorBTN.SmallImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
+        JQAAFiUBSVIk8AAAABNJREFUOE9jGAWjYBSMAjBgYAAABBAAAadEfGMAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="coinBTN.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
+        JQAAFiUBSVIk8AAAABpJREFUWEftwQEBAAAAgiD/r25IQAAAAMC5GhAgAAGdeElDAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="coinBTN.LargeImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
+        JQAAFiUBSVIk8AAAABpJREFUWEftwQEBAAAAgiD/r25IQAAAAMC5GhAgAAGdeElDAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="coinBTN.SmallImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAW
         JQAAFiUBSVIk8AAAABNJREFUOE9jGAWjYBSMAjBgYAAABBAAAadEfGMAAAAASUVORK5CYII=

@@ -1,8 +1,9 @@
 ﻿using System;
+using OpenCvSharp;
+
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using OpenCvSharp;
 namespace openCV0820
 {
     internal class OpenCV_CLASS: IDisposable
@@ -17,13 +18,13 @@ namespace openCV0820
         //대칭
         public Mat SymmetryY(Mat src)
         {
-            symn = new Mat(src.Size(), MatType.CV_8UC3);
+            symn = new Mat();
             Cv2.Flip(src, symn, FlipMode.Y);
             return symn;
         }
         public Mat SymmetryX(Mat src)
         {
-            symn = new Mat(src.Size(), MatType.CV_8UC3);
+            symn = new Mat();
             Cv2.Flip(src, symn, FlipMode.X);
             return symn;
         }
@@ -59,7 +60,7 @@ namespace openCV0820
         {
             rotation = new Mat();
             Mat matrix = Cv2.GetRotationMatrix2D(new Point2f(src.Width / 2, src.Height / 2), angle, 1.0);
-           Cv2.WarpAffine(src, rotation, matrix, new Size(src.Width, src.Height));
+            Cv2.WarpAffine(src, rotation, matrix, new Size(src.Width, src.Height));
             return rotation;
         }
 

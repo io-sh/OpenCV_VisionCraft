@@ -1,18 +1,32 @@
-﻿using OpenCvSharp;
+﻿
+
+using Cognex.InSight;
+using Cognex.InSight.Controls.Display;
+
 using System;
+using System.IO;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
+
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-using OpenCvSharp.Extensions;
+
+
 using System.Windows.Controls.Ribbon;
-using System.Drawing.Drawing2D;
+
 using System.Linq.Expressions;
-using Cognex.InSight;
-using Cognex.InSight.Controls.Display;
+
+
 using static Cognex.InSight.UserAccess.CvsPermissionDefinitions;
 using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
@@ -21,8 +35,8 @@ using System.Runtime.InteropServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using static System.Net.Mime.MediaTypeNames;
 using System.Windows.Media.Imaging;
-using System.IO;
-using System.Drawing.Imaging;
+using static System.Windows.Forms.AxHost;
+
 //using System.Windows.Media;
 
 
@@ -31,6 +45,7 @@ namespace openCV0820
     public partial class Form1 : RibbonForm
     {
         Mat image;
+        Mat bin;
         OpenCV_CLASS convert;
         OpenCV_filter covertfilter;
         OpenCV_Detection detect;
@@ -61,7 +76,6 @@ namespace openCV0820
         bool affine_flag = false;
         float lux, luy, ldx, ldy, rux, ruy, rdx, rdy;
         int clickCount = 0;
-        Mat bin;
         float[] xy;
 
         //글자검출
@@ -89,7 +103,8 @@ namespace openCV0820
         //부분 색상 백분율 검출
         bool percentColor_flag = false;
 
- 
+        //코인 검출
+        bool coinBTN_flag = false;
         public Form1()
         {
             InitializeComponent();
@@ -102,8 +117,6 @@ namespace openCV0820
             covertfilter = new OpenCV_filter();
             detect = new OpenCV_Detection();
             openCV_Action = new OpenCV_action();
-            resizeCBB.SelectedIndex = 9;//초기 크기 비율
-            cropXY = new int[4];//크롭 위치 저장
 
             camTimer.Enabled = false;//카메라 타이머 이벤트 초기화
             cvsInSightDisplay1.Enabled = false;
@@ -112,10 +125,15 @@ namespace openCV0820
             cvsInSightDisplay1.InSight.SoftOnline = false;
             cvsInSightDisplay1.InSight.LiveAcquisition = false;
 
+            resizeCBB.SelectedIndex = 9;//초기 크기 비율
+            cropXY = new int[4];//크롭 위치 저장
+
             xy = new float[8];
 
             //회전 초기값 0도로 설정
             angleCBB.SelectedIndex = 0;
+
+            
         }
         //파일열기
         private void openfile_Click(object sender, EventArgs e)
@@ -132,7 +150,7 @@ namespace openCV0820
                     if (dlg.FileName.EndsWith(".mp4") || dlg.FileName.EndsWith(".avi"))
                     {
                         video = new VideoCapture(dlg.FileName);
-                        camframe = new Mat();
+                        image = new Mat();
                         videoTimer.Enabled = true;
 
                     }
@@ -154,14 +172,12 @@ namespace openCV0820
         {
             if (video.IsOpened())
             {
-                if (video.Read(camframe) && !camframe.Empty())
+                if (video.Read(image) && !image.Empty())
                 {
-                    pictureBox1.Image?.Dispose(); // Dispose of previous image
-                    pictureBox1.Image = BitmapConverter.ToBitmap(camframe);
+                    pictureBox1.Image = BitmapConverter.ToBitmap(image);
                 }
                 else
                 {
-                    // End of video or error
                     stopMotion();
                 }
             }
@@ -228,18 +244,22 @@ namespace openCV0820
             image = convert.SymmetryY(image);
             //좌우대칭 출력
             pictureBox1.Image = image.ToBitmap();
+
         }
         private void symmetryX_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image == null) return;
+
             image = convert.SymmetryX(image);
             pictureBox1.Image = image.ToBitmap();
+
         }
 
         //피라미드형식 확대(2의 배수, 빈공간 샘플링)
         private void zoomin_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image == null) return;
+
             image = convert.ZoomIn(image);
             pictureBox1.Image = image.ToBitmap();
         }
@@ -372,6 +392,9 @@ namespace openCV0820
             stopMotion();
             pictureBox1.Enabled = true;
             pictureBox1.Visible = true;
+
+            video = new VideoCapture(0);//첫카메라
+            image = new Mat();
             try
             {
                 camTimer.Enabled = true;
@@ -381,11 +404,11 @@ namespace openCV0820
         //이미지 출력시, 이전 이미지 출력 정지, 카메라 출력시 타이머 정지
         private void stopMotion()
         {
-            if(video != null) video.Dispose();
+            if (video != null) video.Dispose();
             videoTimer.Enabled = false;
-            if(camframe != null) camframe.Dispose();
-
+            if(image != null) image.Dispose();
             camTimer.Enabled = false;
+
             pictureBox1.Visible = false;
             pictureBox1.Enabled = false;
 
@@ -397,14 +420,13 @@ namespace openCV0820
         {
             try
             {
-                video = new VideoCapture(0);//첫카메라
-                camframe = new Mat();
-
-                video.Read(camframe);
-                pictureBox1.Image = camframe.ToBitmap();
+                video.Read(image);
+                if (coinBTN_flag) Cv2.CopyTo(openCV_Action.cointCheck(image), image);
+                pictureBox1.Image = image.ToBitmap();
             }
             catch (Exception ex) { }
         }
+
 
         private void cognexBTN_Click(object sender, EventArgs e)
         {
@@ -423,6 +445,7 @@ namespace openCV0820
                     cvsInSightDisplay1.ShowImage = true; // 카메라가 취득한 이미지를 보여줌
                     cvsInSightDisplay1.ShowGraphics = true;
 
+
                     Online_Check();
                 }
                 else // 카메라가 연결된 상태일 때
@@ -434,6 +457,7 @@ namespace openCV0820
                 }
             }
             catch { }
+
         }
         private void CognexLiveCB_CheckBoxCheckChanged(object sender, EventArgs e)
         {
@@ -485,15 +509,12 @@ namespace openCV0820
             {
                 pictureBox1.Visible=true;
                 pictureBox1.Enabled=true;
-                Cv2.CopyTo(camframe, image);
                 pictureBox1.Image = image.ToBitmap();
             }
             camTimer.Enabled = false;
             //메모리 해제
             if (cvsInSightDisplay1 != null) cvsInSightDisplay1.Dispose();
-            if (camframe != null) camframe.Dispose();
-            //if (video.Read(camframe) || !camframe.Empty()) video.Release();
-            //video는 그냥 하면 보호중인 메모리를 해제하려 하였기에 오류가 생긴다.
+            if(video != null) video.Dispose();  
         }
 
         private void grayBTN_Click(object sender, EventArgs e)
@@ -824,9 +845,16 @@ namespace openCV0820
             pictureBox1.Image = image.ToBitmap();
         }
 
-        
+        private void coinBTN_Click(object sender, EventArgs e)
+        {
+            coinBTN_flag = !coinBTN_flag;
 
+        }
 
+        private void squareBTN_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Image = detect.Square(image).ToBitmap();
+        }
 
         //색상검출
         private void hsvBTN_Click(object sender, EventArgs e)

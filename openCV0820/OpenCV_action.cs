@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Media;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
@@ -17,12 +19,15 @@ namespace openCV0820
     {
         OpenCV_filter openCV_Filter = new OpenCV_filter();
         OpenCV_Detection openCV_Detection = new OpenCV_Detection();
-        Mat CD;
+        Mat card;
+        Mat affine;
         Mat circle;
+        Mat coin;
         String text;//결과 글자
         string colorStr;//색상 검출 백분율
         string biggestColor;
         string maxColor;
+        string coinSize;
         public string ColorStr
         {
             get { return colorStr; }
@@ -35,29 +40,89 @@ namespace openCV0820
         }
         public Mat CardDetect(Mat src)
         {
-            //원클릭 카드검출
-            CD = src;
-            Cv2.CopyTo(openCV_Filter.GrayScale(CD), CD);
-            Cv2.CopyTo(openCV_Filter.Binary(CD, 180), CD);
-            //Cv2.CopyTo(openCV_Detection.Canny(CD), CD);
-            //이미지마다 적절한 임계값이 필요하다.
+            card = new Mat();
+            OpenCvSharp.Point[] square = openCV_Detection.FindSquare(src);
+            MessageBox.Show(square[0].X+"  "+ square[0].Y + "  "+ square.Length);
+            MessageBox.Show(square[1].X + "  " + square[1].Y + "  " + square.Length);
+            MessageBox.Show(square[2].X + "  " + square[2].Y + "  " + square.Length);
+            MessageBox.Show(square[3].X + "  " + square[3].Y + "  " + square.Length);
+            //OpenCvSharp.Point[][] pts = new OpenCvSharp.Point[][] { square };
+            List<Point2f> src_pts = new List<Point2f>()
+            {
+                new Point2f(0.0f, 0.0f),
+                new Point2f(0.0f, src.Height),
+                new Point2f(src.Width, 0.0f),
+                new Point2f(src.Width, src.Height)
+            };
 
-            //아핀변환
-            //Point2f[] corners;
-            //corners = Cv2.GoodFeaturesToTrack(CD, 100, 0.03, 500, null, 3, false, 0);
-            //float[] xy = new float[8];
-            //for (int i = 0; i < 4; i += 2)
-            //{
-            //    xy[i] = corners[i].X;
-            //    xy[i + 1] = corners[i].Y;
-            //}
-            // Cv2.CopyTo(openCV_Detection.Affine(CD, xy), CD);
-            // 코너검출 -> 글자 배제 방법이 필요.
+            square = sortPoint(square);
+            MessageBox.Show(square[0].X + "  " + square[0].Y + "  " + square.Length);
+            MessageBox.Show(square[1].X + "  " + square[1].Y + "  " + square.Length);
+            MessageBox.Show(square[2].X + "  " + square[2].Y + "  " + square.Length);
+            MessageBox.Show(square[3].X + "  " + square[3].Y + "  " + square.Length);
+            List<Point2f> affine_pts = new List<Point2f>()
+            {
+                new Point2f(square[0].X, square[0].Y),
+                new Point2f(square[1].X, square[1].Y),
+                new Point2f(square[2].X, square[2].Y),
+                new Point2f(square[3].X, square[3].Y)
+            };
+            Mat matrix = Cv2.GetPerspectiveTransform(affine_pts, src_pts);
+            Cv2.WarpPerspective(src, card, matrix, new OpenCvSharp.Size(src.Width, src.Height));
 
-            text = openCV_Detection.Tesseract(CD);
-            
-            return CD;
+            Text = openCV_Detection.Tesseract(card);
+
+            return card;
         }
+
+        private OpenCvSharp.Point[] sortPoint(OpenCvSharp.Point[] square)
+        {
+            OpenCvSharp.Point[] sort = new OpenCvSharp.Point[4];
+            int min1 = int.MaxValue;
+            int min2 = int.MaxValue;
+            int minX1 = 0;
+            int minX2 = 0;
+            for(int i =0; i < 4; i++)
+            {
+                if (square[i].X < min1)
+                {
+                    min1 = square[i].X;
+                    minX1 = i;
+                }
+                else if (square[i].X <= min2 && i != minX1)
+                {
+                    min2 = square[i].X;
+                    minX2 = i;
+                }
+                
+            }
+
+
+            //후반 두개 고치기 선택한 두개 말고 두개 뽑아서 고치기
+
+            if (square[minX1].Y < square[minX2].Y)
+            {
+                sort[0] = square[minX1];
+                sort[1] = square[minX2];
+            }
+            else
+            {
+                sort[1] = square[minX1];
+                sort[0] = square[minX2];
+            }
+            if(square[].Y < square[3 - minX2].Y)
+            {
+                sort[2] = square[3 - minX1];
+                sort[3] = square[3 - minX2];
+            }
+            else
+            {
+                sort[3] = square[3 - minX1];
+                sort[2] = square[3 - minX2];
+            }
+            return sort;
+        }
+
         public void whatIsColor(Mat src)
         {
             //난수설정
@@ -238,10 +303,46 @@ namespace openCV0820
             }
             return dst;
         }
+        public Mat cointCheck(Mat src)
+        {
+            Mat dst = new Mat();
+            coin = new Mat();
+            Cv2.CopyTo(src, dst);
+            //그레이스케일
+            if (src.Channels() != 1) Cv2.CvtColor(src, coin, ColorConversionCodes.BGR2GRAY);
+            else Cv2.CopyTo(src, coin);
+            //블러
+            Cv2.GaussianBlur(coin, coin, new OpenCvSharp.Size(11, 11), 0, 0, BorderTypes.Default);
+            //원검출
+            CircleSegment[] circles = Cv2.HoughCircles(coin, HoughModes.Gradient, 1, 100, 100, 35, 0, 0);
+            for (int i = 0; i < circles.Length; i++)
+            {
+                OpenCvSharp.Point center = new OpenCvSharp.Point(circles[i].Center.X - circles[i].Radius, circles[i].Center.Y - circles[i].Radius);
+                Cv2.Rectangle(dst, new OpenCvSharp.Point(circles[i].Center.X - circles[i].Radius, circles[i].Center.Y - circles[i].Radius),
+                                   new OpenCvSharp.Point(circles[i].Center.X + circles[i].Radius, circles[i].Center.Y + circles[i].Radius),
+                                   Scalar.Red, 1);
+
+                coinClassification(circles[i].Radius);
+                Cv2.PutText(dst, coinSize, center, HersheyFonts.HersheySimplex, 0.7, Scalar.Red);
+            }
+
+            return dst;
+        }
+
+        private void coinClassification(float rad)
+        {
+            //높이 약15cm일떄의 동전 크기 - 상황마다 조절 필요
+            if (rad > 45 && rad <60) coinSize = "100";
+            else if (rad < 80) coinSize = "500";
+            else coinSize = "길이 : " + rad.ToString();
+        }
+
         public void Dispose()
         {
-            if (CD != null) { CD.Dispose(); }
+            if (card != null) { card.Dispose(); }
             if(circle != null) { circle.Dispose(); }
+            if(coin != null) { coin.Dispose(); }
+            if(affine != null ) { affine.Dispose(); }
         }
     }
 }
