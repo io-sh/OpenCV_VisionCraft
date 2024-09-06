@@ -130,6 +130,7 @@ namespace openCV0820
             this.symmetryX1 = new System.Windows.Forms.RibbonButton();
             this.ribbonDescriptionMenuItem1 = new System.Windows.Forms.RibbonDescriptionMenuItem();
             this.videoTimer = new System.Windows.Forms.Timer(this.components);
+            this.ribbonPanel14 = new System.Windows.Forms.RibbonPanel();
             ribbonPanel8 = new System.Windows.Forms.RibbonPanel();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -823,6 +824,7 @@ namespace openCV0820
             this.ribbonTab3.Panels.Add(this.ribbonPanel4);
             this.ribbonTab3.Panels.Add(this.ribbonPanel11);
             this.ribbonTab3.Panels.Add(this.ribbonPanel13);
+            this.ribbonTab3.Panels.Add(this.ribbonPanel14);
             this.ribbonTab3.Text = "응용";
             // 
             // ribbonPanel4
@@ -1000,6 +1002,11 @@ namespace openCV0820
             this.videoTimer.Interval = 33;
             this.videoTimer.Tick += new System.EventHandler(this.videoTimer_Tick);
             // 
+            // ribbonPanel14
+            // 
+            this.ribbonPanel14.Name = "ribbonPanel14";
+            this.ribbonPanel14.Text = "ribbonPanel14";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
@@ -1120,6 +1127,7 @@ namespace openCV0820
         private System.Windows.Forms.RibbonPanel ribbonPanel13;
         private System.Windows.Forms.RibbonButton coinBTN;
         private System.Windows.Forms.RibbonButton squareBTN;
+        private System.Windows.Forms.RibbonPanel ribbonPanel14;
     }
 }
 
