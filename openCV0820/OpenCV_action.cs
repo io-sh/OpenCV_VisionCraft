@@ -96,10 +96,7 @@ namespace openCV0820
                 }
                 
             }
-
-
-            //후반 두개 고치기 선택한 두개 말고 두개 뽑아서 고치기
-
+            //왼쪽 좌표 위아래 정렬
             if (square[minX1].Y < square[minX2].Y)
             {
                 sort[0] = square[minX1];
@@ -110,15 +107,32 @@ namespace openCV0820
                 sort[1] = square[minX1];
                 sort[0] = square[minX2];
             }
-            if(square[].Y < square[3 - minX2].Y)
+
+            //안뽑힌 두수 뽑기
+            int[] maxX = new int[2];
+            int count = 0;
+            for(int i =0; i < 4; i++)
             {
-                sort[2] = square[3 - minX1];
-                sort[3] = square[3 - minX2];
+                if (i != minX1 && i != minX2 && count ==0)
+                {
+                    maxX[0] = i;
+                    count++;
+                }
+                else if(i != minX1 && i != minX2 && maxX[0] != i)
+                {
+                    maxX[1] = i;
+                }
+            }
+            //오른쪽 위아래 정렬
+            if(square[maxX[0]].Y < square[maxX[1]].Y)
+            {
+                sort[2] = square[maxX[0]];
+                sort[3] = square[maxX[1]];
             }
             else
             {
-                sort[3] = square[3 - minX1];
-                sort[2] = square[3 - minX2];
+                sort[2] = square[maxX[1]];
+                sort[3] = square[maxX[0]];
             }
             return sort;
         }
