@@ -909,6 +909,7 @@ namespace openCV0820
             // 
             // ribbonPanel15
             // 
+            this.ribbonPanel15.ButtonMoreVisible = false;
             this.ribbonPanel15.Items.Add(this.faceBTN);
             this.ribbonPanel15.Name = "ribbonPanel15";
             this.ribbonPanel15.Text = "얼굴인식";
