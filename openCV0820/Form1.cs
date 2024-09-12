@@ -379,37 +379,14 @@ namespace openCV0820
                     {
                         return;
                     }
-                    Rectangle rect = new Rectangle(cropXY[0], cropXY[1], cropXY[2], cropXY[3]);//크롭영역 정의
-                    Bitmap OriginalImage = new Bitmap(pictureBox1.Image, pictureBox1.Width, pictureBox1.Height);//원본이미지 로드
-                    Bitmap _img = new Bitmap(cropWidth, cropHeight);//새로운 이미지 생성
-                    Graphics g = Graphics.FromImage(_img);//이미지 그리기 객체
-                    //그래픽속성설정
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;//그래픽보간모드
-                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;//픽셀오프셋, 렌더링시 픽셀 위치 조정 -> 이미지 품질 및 렌더링 성능 조절
-                    g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;//합성 품질, 그래픽 요소 혼합시 결정 설정 -> 투명도와 블렌딩 효과 적용시
-                    g.DrawImage(OriginalImage, 0, 0, rect, GraphicsUnit.Pixel);//잘라내기, 원본, 시작좌표, 결과, 보정방법
-                    //픽처박스 업뎃
-                    pictureBox1.Image = _img;
-                    pictureBox1.Width = _img.Width;
-                    pictureBox1.Height = _img.Height;
+                    image = convert.Cutting(image, cropXY[0], cropXY[1], cropXY[2], cropXY[3]);
+                    pictureBox1.Image = image.ToBitmap();
                     cropSelection = false;
                 }
                 if (percentColor_flag)
                 {
-                    //자르기 부분 반복
-                    //관심 영역 설정 부분
-                    if (cropWidth < 1){ return; }
-                    Rectangle rect = new Rectangle(cropXY[0], cropXY[1], cropXY[2], cropXY[3]);//크롭영역 정의
-                    Bitmap OriginalImage = new Bitmap(pictureBox1.Image, pictureBox1.Width, pictureBox1.Height);//원본이미지 로드
-                    Bitmap _img = new Bitmap(cropWidth, cropHeight);//새로운 이미지 생성
-                    Graphics g = Graphics.FromImage(_img);//이미지 그리기 객체
-                                                          //그래픽속성설정
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;//그래픽보간모드
-                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;//픽셀오프셋, 렌더링시 픽셀 위치 조정 -> 이미지 품질 및 렌더링 성능 조절
-                    g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;//합성 품질, 그래픽 요소 혼합시 결정 설정 -> 투명도와 블렌딩 효과 적용시
-                    g.DrawImage(OriginalImage, 0, 0, rect, GraphicsUnit.Pixel);//잘라내기, 원본, 시작좌표, 결과, 보정방법
-
-                    openCV_Action.whatIsColor(_img.ToMat());
+                    image = convert.Cutting(image, cropXY[0], cropXY[1], cropXY[2], cropXY[3]);
+                    openCV_Action.whatIsColor(image);
                     MessageBox.Show(openCV_Action.ColorStr);//팝업
                     percentColor_flag = false;
                 }

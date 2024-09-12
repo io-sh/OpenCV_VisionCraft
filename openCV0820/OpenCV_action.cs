@@ -72,7 +72,8 @@ namespace openCV0820
                 new Point2f(square[3].X, square[3].Y)
             };
             Mat matrix = Cv2.GetPerspectiveTransform(affine_pts, src_pts);
-            Cv2.WarpPerspective(src, card, matrix, new OpenCvSharp.Size(src.Width, src.Height));
+            Cv2.WarpPerspective(src, card, matrix, 
+                new OpenCvSharp.Size(src.Width, src.Height));
 
             Text = openCV_Detection.Tesseract(card);
 
@@ -82,11 +83,9 @@ namespace openCV0820
         private OpenCvSharp.Point[] sortPoint(OpenCvSharp.Point[] square)
         {
             OpenCvSharp.Point[] sort = new OpenCvSharp.Point[4];
-            int min1 = int.MaxValue;
-            int min2 = int.MaxValue;
-            int minX1 = 0;
-            int minX2 = 0;
-            for(int i =0; i < 4; i++)
+            int min1 = int.MaxValue; int min2 = int.MaxValue;
+            int minX1 = 0; int minX2 = 0;
+            for (int i = 0; i < 4; i++)
             {
                 if (square[i].X < min1)
                 {
@@ -98,10 +97,8 @@ namespace openCV0820
                     min2 = square[i].X;
                     minX2 = i;
                 }
-                
             }
-            //왼쪽 좌표 위아래 정렬
-            if (square[minX1].Y < square[minX2].Y)
+            if (square[minX1].Y < square[minX2].Y)//왼쪽 좌표 위아래 정렬
             {
                 sort[0] = square[minX1];
                 sort[1] = square[minX2];
@@ -111,11 +108,8 @@ namespace openCV0820
                 sort[1] = square[minX1];
                 sort[0] = square[minX2];
             }
-
-            //안뽑힌 두수 뽑기
-            int[] maxX = new int[2];
-            int count = 0;
-            for(int i =0; i < 4; i++)
+            int[] maxX = new int[2]; int count = 0;
+            for (int i =0; i < 4; i++)//안뽑힌 두수 뽑기
             {
                 if (i != minX1 && i != minX2 && count ==0)
                 {
@@ -147,7 +141,8 @@ namespace openCV0820
             Random wRandom = new Random();
             Random hRandom = new Random();
             Mat hsvImage = new Mat();
-            Cv2.CvtColor(src, hsvImage, ColorConversionCodes.BGR2HSV);
+            Cv2.CvtColor(src, hsvImage, 
+                ColorConversionCodes.BGR2HSV);
             //랜덤 지점 설정
             int wNum;
             int hNum;
@@ -171,8 +166,8 @@ namespace openCV0820
             int whiteCount = 0;
             //창에 쓸 문구
             colorStr = "";
-            //난수 발생
-            while (allCount<100)
+            
+            while (allCount<100)//난수 발생
             {
                 wNum = wRandom.Next(hsvImage.Cols);
                 hNum = hRandom.Next(hsvImage.Rows);
@@ -222,11 +217,11 @@ namespace openCV0820
                 {
                     whiteCount++;
                 }
-                //검흰 빼고 색상 100개 검출 완료시 끝
+                //색상 100개 검출 완료시 끝
                 allCount = redCount + orangeCount + yellowCount + greenCount
                     + cyanCount + blueCount + magentaCount + pinkCount+ blackCount+ whiteCount;
             }
-            //카운트한 색상 팝업
+            //색상 농도 보여줄 텍스트
             if (redCount != 0) colorStr = "Red : " + redCount + "%" + "\n\r";
             if (orangeCount != 0) colorStr = colorStr + "Orange : " + orangeCount + "%" + "\n\r";
             if (yellowCount != 0) colorStr = colorStr + "Yellow : " + yellowCount + "%" + "\n\r";
@@ -239,8 +234,10 @@ namespace openCV0820
             if (whiteCount != 0) colorStr = colorStr + "White" + whiteCount + "%";
 
             //가장 비율이 높은 색상
-            int[] counts = { redCount, orangeCount, yellowCount, greenCount, cyanCount, blueCount, magentaCount, pinkCount, blackCount, whiteCount };
-            string[] colorsr = { "Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Magenta", "Pink", "Black", "White"};
+            int[] counts = { redCount, orangeCount, yellowCount, greenCount, cyanCount, blueCount, 
+                magentaCount, pinkCount, blackCount, whiteCount };
+            string[] colorsr = { "Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Magenta",
+                "Pink", "Black", "White"};
             // 색상 및 카운트 정렬
             SortColorsByCount(ref counts, ref colorsr);
 
