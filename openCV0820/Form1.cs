@@ -36,6 +36,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using static System.Net.Mime.MediaTypeNames;
 using System.Windows.Media.Imaging;
 using static System.Windows.Forms.AxHost;
+using static openCV0820.userControl_barcode;
+using System.Reflection.Emit;
+using ZXing;
 
 //using System.Windows.Media;
 
@@ -105,6 +108,35 @@ namespace openCV0820
 
         //코인 검출
         bool coinBTN_flag = false;
+
+        //바코드
+        userControl_barcode userControl_Barcode;
+        bool barcode_flag = false;
+        string company;
+        string product;
+        string production;
+        DateTime date;
+        string test;
+        int year;
+        int month;
+        bool luhn;
+        DBConnect db = new DBConnect();
+
+        int sum;
+
+        //얼굴 검출
+        bool face_flag = false;
+        UserControl_face userControl_Face;
+        bool deco1 = false;
+        bool deco2 = false;
+        bool deco3 = false;
+        bool deco4 = false;
+        bool deco5 = false;
+        
+        string earImage1 = "../../bin/Debug/haarcascade_frontalface_alt/rabbit_ear.png";//토끼귀
+        string girlHairImage = "../../bin/Debug/haarcascade_frontalface_alt/girl_hair.png";
+        string baldHeadImage = "../../bin/Debug/haarcascade_frontalface_alt/baldHead.png";
+        string sunglassesImage = "../../bin/Debug/haarcascade_frontalface_alt/sunglasses.png";
         public Form1()
         {
             InitializeComponent();
@@ -421,8 +453,14 @@ namespace openCV0820
             try
             {
                 video.Read(image);
-                if (coinBTN_flag) Cv2.CopyTo(openCV_Action.cointCheck(image), image);
-                pictureBox1.Image = image.ToBitmap();
+                if (coinBTN_flag) pictureBox1.Image = openCV_Action.cointCheck(image).ToBitmap();
+                else if (deco1) pictureBox1.Image = openCV_Action.faceDecter(image).ToBitmap();
+                else if(deco2) pictureBox1.Image = openCV_Action.faceDecoEar(image, earImage1).ToBitmap();
+                //인수 원본, 전경 이미지 위치, 전경 가로, 전경 세로, 전경 시작좌표 X, Y, 머리 위?
+                else if (deco3) pictureBox1.Image = openCV_Action.faceDeco(image, girlHairImage, 2, 3, 0.6, 0.5, true).ToBitmap();
+                else if (deco4) pictureBox1.Image = openCV_Action.faceDeco(image, baldHeadImage, 1, 0.5, 0, 0.3, true).ToBitmap();
+                else if (deco5) pictureBox1.Image = openCV_Action.faceDeco(image, sunglassesImage, 1, 0.3, 0, 0.2, false).ToBitmap();
+                else pictureBox1.Image = image.ToBitmap();
             }
             catch (Exception ex) { }
         }
@@ -775,8 +813,6 @@ namespace openCV0820
         {
             pictureBox1.Image = detect.Circle(image).ToBitmap();
         }
-
-        
         //블러
         private void blurBTN_Click(object sender, EventArgs e)
         {
@@ -816,9 +852,6 @@ namespace openCV0820
                 pictureBox1.Image = applyBlur.ToBitmap();
             }
         }
-
-        
-
         public int oddNumber_Check(int num)
         {
             if (num % 2 == 0) num++;
@@ -848,12 +881,18 @@ namespace openCV0820
         private void coinBTN_Click(object sender, EventArgs e)
         {
             coinBTN_flag = !coinBTN_flag;
-
         }
 
         private void squareBTN_Click(object sender, EventArgs e)
         {
             pictureBox1.Image = detect.Square(image).ToBitmap();
+        }
+
+        private void barcodeBTN_Click(object sender, EventArgs e)
+        {
+            UserControl_popOut();
+            barcode_flag = true;
+            PopupUserControl();
         }
 
         //색상검출
@@ -881,13 +920,285 @@ namespace openCV0820
             string colorText= userControl_Color.ColorText;
             pictureBox1.Image = detect.Color(image, colorText).ToBitmap();
         }
+
+        
+
         //부분 색상 검출
         private void percentBTN_Click(object sender, EventArgs e)
         {
             percentColor_flag = true;
         }
 
+        //바코드 
+        private void UserControl_Barcode_event_endBTN_Click()
+        {
+            UserControl_popOut();
+        }
+        private void UserControl_Barcode_event_UC_select_Click()
+        {
+            string name = userControl_Barcode.TextBox1.Text;
+            db.select(name);
+            userControl_Barcode.DataGridView1.DataSource = db.dt;
+        }
+        private void UserControl_Barcode_event_UC_barcodeBTN_Click()
+        {
+            userControl_Barcode.PictureBox1.Image = pictureBox1.Image;
+            string decoded = "";
+            BarcodeReader reader = new BarcodeReader();//인스턴스 생성
+            Result result = reader.Decode((Bitmap)userControl_Barcode.PictureBox1.Image);//바코드 해석
+            db.connect();
+            // 결과를 확인합니다.
+            if (result != null)
+            {
+                int[] num = { 2, 4, 2, 4, 1 };
+                int currentPosition = 0;
 
+                for (int i = 0; i < num.Length; i++)
+                {
+                    if (currentPosition + num[i] <= result.Text.Length)
+                    {
+                        string segment = result.Text.Substring(currentPosition, num[i]);
+                        currentPosition += num[i];
+
+                        if (i == 0)
+                        {
+                            switch (segment)
+                            {
+                                case "11":
+                                    company = "삼성";
+                                    break;
+                                case "21":
+                                    company = "엘지";
+                                    break;
+                                case "88":
+                                    company = "씨제이";
+                                    break;
+                                case "99":
+                                    company = "오뚜기";
+                                    break;
+                            }
+                        }
+                        else if (i == 1)
+                        {
+                            switch (segment)
+                            {
+                                case "1234":
+                                    product = "세탁기";
+                                    break;
+                                case "1245":
+                                    product = "냉장고";
+                                    break;
+                                case "1256":
+                                    product = "정수기";
+                                    break;
+                                case "1267":
+                                    product = "에어컨";
+                                    break;
+                                case "3412":
+                                    product = "햇반";
+                                    break;
+                                case "3413":
+                                    product = "밀가루";
+                                    break;
+                                case "3415":
+                                    product = "만두";
+                                    break;
+                                case "3416":
+                                    product = "라면";
+                                    break;
+                            }
+                        }
+                        else if (i == 2)
+                        {
+                            switch (segment)
+                            {
+                                case "11":
+                                    production = "한국";
+                                    break;
+                                case "12":
+                                    production = "차이나";
+                                    break;
+                                case "13":
+                                    production = "베트남";
+                                    break;
+                                case "14":
+                                    production = "태국";
+                                    break;
+                            }
+                        }
+                        else if (i == 3)
+                        {
+                            string yearSub = segment.Substring(0, 2);
+                            string monthSub = segment.Substring(2, 2);
+                            year = 2000 + int.Parse(yearSub);
+                            month = int.Parse(monthSub);
+
+                            date = new DateTime(year, month, 1);
+                        }
+                        else if (i == 4)
+                        {
+                            string rt = result.Text; // EAN-13 바코드 문자열
+                            int len = rt.Length;
+
+                            if (len != 13)
+                            {
+                                throw new ArgumentException("EAN-13 바코드는 13자리 숫자로 구성되어야 합니다.");
+                            }
+
+                            int sumOdd = 0; // 홀수 자리 숫자의 합
+                            int sumEven = 0; // 짝수 자리 숫자의 합
+
+                            // 홀수 및 짝수 자리에 있는 숫자 합산 (1-based index 기준)
+                            for (int j = 0; j < len - 1; j++)
+                            {
+                                int digit = int.Parse(rt[j].ToString());
+
+                                if (j % 2 == 0) // 0-based index에서 홀수 자리에 해당 (1, 3, 5, ...)
+                                {
+                                    sumOdd += digit;
+                                }
+                                else
+                                {
+                                    sumEven += digit;
+                                }
+                            }
+
+                            // 홀수 자리 합에 3을 곱하고, 짝수 자리 합과 더함
+                            int total = sumOdd + (sumEven * 3);
+
+                            // 총합을 10으로 나눈 나머지를 구하고, 체크디지트 계산
+                            int remainder = total % 10;
+                            int checkDigit = (10 - remainder) % 10;
+
+                            // 실제 체크디지트 (마지막 자리 숫자) 추출
+                            int actualCheckDigit = int.Parse(rt.Substring(len - 1, 1));
+
+                            // 체크디지트 검증
+                            luhn = (checkDigit == actualCheckDigit);
+                        }
+                        else
+                        {
+                            test = segment;
+                            // 바코드를 인식하지 못한 경우의 처리
+                        }
+                    }
+                }
+                //해석된 텍스트, 바코드 형식
+                decoded = result.ToString() + "\r\n" + result.BarcodeFormat.ToString()
+                     + $"\r\n {company}\r\n {product}\r\n {production}\r\n {date} \r\n {luhn}";
+                userControl_Barcode.Label1.Text = decoded;
+                if (luhn) db.insert(company, product, production, date);
+                MessageBox.Show($"바코드 오류 :{sum}");
+                userControl_Barcode.DataGridView1.DataSource = db.dt;
+            }
+            else
+            {
+                userControl_Barcode.Label1.Text = "바코드를 인식하지 못하였습니다.";
+            }
+        }
+
+        private void UserControl_Barcode_event_UC_camBTN_Click()
+        {
+            camTimer.Enabled = !camTimer.Enabled;
+            pictureBox1.Enabled = camTimer.Enabled;
+            pictureBox1.Visible = camTimer.Enabled;
+            if (camTimer.Enabled)
+            {
+                video = new VideoCapture(0);//첫카메라
+                image = new Mat();
+            }
+        }
+
+
+        //얼굴검출
+        private void faceBTN_Click(object sender, EventArgs e)
+        {
+            UserControl_popOut();
+            face_flag = true;
+            PopupUserControl();
+        }
+        private void UserControl_Face_event_decorationBTN1()
+        {
+            deco1 = !deco1;
+            decoFlag();
+        }
+        private void UserControl_Face_event_decorationBTN2()
+        {
+            deco2 = !deco2;
+            decoFlag();
+        }
+        private void UserControl_Face_event_girlHairBTN()
+        {
+            deco3 = !deco3;
+            decoFlag();
+        }
+        private void UserControl_Face_event_baldHeadBTN()
+        {
+            deco4 = !deco4;
+            decoFlag();
+        }
+
+        private void UserControl_Face_event_sunglassesBTN()
+        {
+            deco5 = !deco5;
+            decoFlag();
+        }
+        private void decoFlag()
+        {
+            if (deco1)
+            {
+                deco2 = false;
+                deco3 = false;
+                deco4 = false;
+                deco5 = false;
+            }
+            if(deco2)
+            {
+                deco1 = false;
+                deco3 = false;
+                deco4 = false;
+                deco5 = false;
+            }
+            if (deco3)
+            {
+                deco1 = false;
+                deco2 = false;
+                deco4 = false;
+                deco5 = false;
+            }
+            if (deco4)
+            {
+                deco1 = false;
+                deco2 = false;
+                deco3 = false;
+                deco5 = false;
+            }
+            if (deco5)
+            {
+                deco1 = false;
+                deco2 = false;
+                deco3 = false;
+                deco4 = false;
+            }
+        }
+        
+        private void UserControl_Face_event_endBTN()
+        {
+            UserControl_popOut();
+        }
+        private void UserControl_Face_event_camBTN()
+        {
+            camTimer.Enabled = !camTimer.Enabled;
+            pictureBox1.Enabled = camTimer.Enabled;
+            pictureBox1.Visible = camTimer.Enabled;
+            if (camTimer.Enabled)
+            {
+                video = new VideoCapture(0);//첫카메라
+                image = new Mat();
+            }
+        }
+
+        
         //유저컨트롤 생성 및 삭제
         private void PopupUserControl()
         {
@@ -947,9 +1258,32 @@ namespace openCV0820
                 userControl_Color.applyBtnEvent += UserControl_Color_applyBtnEvent;
                 userControl_Color.endBtnEvent += UserControl_Color_endBtnEvent;
             }
+            if (barcode_flag)
+            {
+                userControl_Barcode = new userControl_barcode();
+                this.panel2.Controls.Add(userControl_Barcode);
+
+                userControl_Barcode.event_UC_camBTN_Click += UserControl_Barcode_event_UC_camBTN_Click;
+                userControl_Barcode.event_UC_barcodeBTN_Click += UserControl_Barcode_event_UC_barcodeBTN_Click;
+                userControl_Barcode.event_UC_select_Click += UserControl_Barcode_event_UC_select_Click;
+                userControl_Barcode.event_endBTN_Click += UserControl_Barcode_event_endBTN_Click;
+            }
+            if (face_flag)
+            {
+                userControl_Face = new UserControl_face();
+                this.panel2.Controls.Add(userControl_Face);
+
+                userControl_Face.event_endBTN += UserControl_Face_event_endBTN;
+                userControl_Face.event_camBTN += UserControl_Face_event_camBTN;
+                userControl_Face.event_decorationBTN1 += UserControl_Face_event_decorationBTN1;
+                userControl_Face.event_decorationBTN2 += UserControl_Face_event_decorationBTN2;
+                userControl_Face.event_girlHairBTN += UserControl_Face_event_girlHairBTN;
+                userControl_Face.event_baldHeadBTN += UserControl_Face_event_baldHeadBTN;
+                userControl_Face.event_sunglassesBTN += UserControl_Face_event_sunglassesBTN;
+            }
         }
 
-        
+
         private void UserControl_popOut()
         {
             if (userControl_affine1 != null)
@@ -993,6 +1327,20 @@ namespace openCV0820
                 this.Controls.Remove(userControl_Color);
                 userControl_Color.Dispose();
                 color_flag = false;
+            }
+            if (userControl_Barcode != null)
+            {
+                this.panel2.Visible = false;
+                this.Controls.Remove(userControl_Barcode);
+                userControl_Barcode.Dispose();
+                barcode_flag = false;
+            }
+            if (userControl_Face != null)
+            {
+                this.panel2.Visible = false;
+                this.Controls.Remove(userControl_Face);
+                userControl_Face.Dispose();
+                face_flag = false;
             }
         }
     }

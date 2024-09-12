@@ -130,6 +130,9 @@
   <data name="01 복사후 좌우반전" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\01 복사후 좌우반전.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="39881" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\39881.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="d2e112e" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\d2e112e.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -145,8 +148,8 @@
   <data name="asd" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\asd.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="12asd" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\12asd.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="2001064" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2001064.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="32329" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\32329.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -165,6 +168,9 @@
   </data>
   <data name="dlwlsghk" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dlwlsghk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="12asd" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\12asd.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="444" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\444.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -187,6 +193,9 @@
   <data name="wrtFileImageView" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wrtFileImageView.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="pngtree-korean-won-coin-vector-icon-free-illustration-png-image_7261568" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pngtree-korean-won-coin-vector-icon-free-illustration-png-image_7261568.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="dd123123" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dd123123.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -196,13 +205,19 @@
   <data name="522556" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\522556.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="713" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\713.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="7131" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\7131.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="02 복사후 상하반전" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\02 복사후 상하반전.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="zoom2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zoom2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="2001064" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\2001064.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="7511530" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\7511530.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -116,6 +116,10 @@ namespace openCV0820
             this.allColorBTN = new System.Windows.Forms.RibbonButton();
             this.ribbonPanel13 = new System.Windows.Forms.RibbonPanel();
             this.coinBTN = new System.Windows.Forms.RibbonButton();
+            this.ribbonPanel14 = new System.Windows.Forms.RibbonPanel();
+            this.barcodeBTN = new System.Windows.Forms.RibbonButton();
+            this.ribbonPanel15 = new System.Windows.Forms.RibbonPanel();
+            this.faceBTN = new System.Windows.Forms.RibbonButton();
             this.camTimer = new System.Windows.Forms.Timer(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -130,7 +134,6 @@ namespace openCV0820
             this.symmetryX1 = new System.Windows.Forms.RibbonButton();
             this.ribbonDescriptionMenuItem1 = new System.Windows.Forms.RibbonDescriptionMenuItem();
             this.videoTimer = new System.Windows.Forms.Timer(this.components);
-            this.ribbonPanel14 = new System.Windows.Forms.RibbonPanel();
             ribbonPanel8 = new System.Windows.Forms.RibbonPanel();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -825,6 +828,7 @@ namespace openCV0820
             this.ribbonTab3.Panels.Add(this.ribbonPanel11);
             this.ribbonTab3.Panels.Add(this.ribbonPanel13);
             this.ribbonTab3.Panels.Add(this.ribbonPanel14);
+            this.ribbonTab3.Panels.Add(this.ribbonPanel15);
             this.ribbonTab3.Text = "응용";
             // 
             // ribbonPanel4
@@ -872,6 +876,7 @@ namespace openCV0820
             // 
             // ribbonPanel13
             // 
+            this.ribbonPanel13.ButtonMoreVisible = false;
             this.ribbonPanel13.Items.Add(this.coinBTN);
             this.ribbonPanel13.Name = "ribbonPanel13";
             this.ribbonPanel13.Text = "동전 검출";
@@ -882,8 +887,40 @@ namespace openCV0820
             this.coinBTN.LargeImage = ((System.Drawing.Image)(resources.GetObject("coinBTN.LargeImage")));
             this.coinBTN.Name = "coinBTN";
             this.coinBTN.SmallImage = ((System.Drawing.Image)(resources.GetObject("coinBTN.SmallImage")));
-            this.coinBTN.Text = "CoinBTN";
+            this.coinBTN.Text = "";
             this.coinBTN.Click += new System.EventHandler(this.coinBTN_Click);
+            // 
+            // ribbonPanel14
+            // 
+            this.ribbonPanel14.ButtonMoreVisible = false;
+            this.ribbonPanel14.FlowsTo = System.Windows.Forms.RibbonPanelFlowDirection.Left;
+            this.ribbonPanel14.Items.Add(this.barcodeBTN);
+            this.ribbonPanel14.Name = "ribbonPanel14";
+            this.ribbonPanel14.Text = "바코드";
+            // 
+            // barcodeBTN
+            // 
+            this.barcodeBTN.Image = ((System.Drawing.Image)(resources.GetObject("barcodeBTN.Image")));
+            this.barcodeBTN.LargeImage = ((System.Drawing.Image)(resources.GetObject("barcodeBTN.LargeImage")));
+            this.barcodeBTN.Name = "barcodeBTN";
+            this.barcodeBTN.SmallImage = ((System.Drawing.Image)(resources.GetObject("barcodeBTN.SmallImage")));
+            this.barcodeBTN.Text = "";
+            this.barcodeBTN.Click += new System.EventHandler(this.barcodeBTN_Click);
+            // 
+            // ribbonPanel15
+            // 
+            this.ribbonPanel15.Items.Add(this.faceBTN);
+            this.ribbonPanel15.Name = "ribbonPanel15";
+            this.ribbonPanel15.Text = "얼굴인식";
+            // 
+            // faceBTN
+            // 
+            this.faceBTN.Image = ((System.Drawing.Image)(resources.GetObject("faceBTN.Image")));
+            this.faceBTN.LargeImage = ((System.Drawing.Image)(resources.GetObject("faceBTN.LargeImage")));
+            this.faceBTN.Name = "faceBTN";
+            this.faceBTN.SmallImage = ((System.Drawing.Image)(resources.GetObject("faceBTN.SmallImage")));
+            this.faceBTN.Text = "";
+            this.faceBTN.Click += new System.EventHandler(this.faceBTN_Click);
             // 
             // camTimer
             // 
@@ -1001,11 +1038,6 @@ namespace openCV0820
             // 
             this.videoTimer.Interval = 33;
             this.videoTimer.Tick += new System.EventHandler(this.videoTimer_Tick);
-            // 
-            // ribbonPanel14
-            // 
-            this.ribbonPanel14.Name = "ribbonPanel14";
-            this.ribbonPanel14.Text = "ribbonPanel14";
             // 
             // Form1
             // 
@@ -1128,6 +1160,9 @@ namespace openCV0820
         private System.Windows.Forms.RibbonButton coinBTN;
         private System.Windows.Forms.RibbonButton squareBTN;
         private System.Windows.Forms.RibbonPanel ribbonPanel14;
+        private System.Windows.Forms.RibbonButton barcodeBTN;
+        private System.Windows.Forms.RibbonPanel ribbonPanel15;
+        private System.Windows.Forms.RibbonButton faceBTN;
     }
 }
 

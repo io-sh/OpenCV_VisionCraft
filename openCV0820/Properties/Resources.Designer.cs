@@ -173,6 +173,16 @@ namespace openCV0820.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap _39881 {
+            get {
+                object obj = ResourceManager.GetObject("39881", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap _444 {
             get {
                 object obj = ResourceManager.GetObject("444", resourceCulture);
@@ -243,6 +253,26 @@ namespace openCV0820.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap _713 {
+            get {
+                object obj = ResourceManager.GetObject("713", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap _7131 {
+            get {
+                object obj = ResourceManager.GetObject("7131", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap _715794 {
             get {
                 object obj = ResourceManager.GetObject("715794", resourceCulture);
@@ -256,6 +286,16 @@ namespace openCV0820.Properties {
         internal static System.Drawing.Bitmap _7340674 {
             get {
                 object obj = ResourceManager.GetObject("7340674", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap _7511530 {
+            get {
+                object obj = ResourceManager.GetObject("7511530", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -306,6 +346,16 @@ namespace openCV0820.Properties {
         internal static System.Drawing.Bitmap In_Sight_9000 {
             get {
                 object obj = ResourceManager.GetObject("In-Sight 9000", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap pngtree_korean_won_coin_vector_icon_free_illustration_png_image_7261568 {
+            get {
+                object obj = ResourceManager.GetObject("pngtree-korean-won-coin-vector-icon-free-illustration-png-image_7261568", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

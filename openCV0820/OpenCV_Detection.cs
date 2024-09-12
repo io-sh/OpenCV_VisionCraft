@@ -156,6 +156,8 @@ namespace openCV0820
         }
         //색상 백분율 검출
 
+
+        //사각형검출
        public Mat Square(Mat src)
         {
             OpenCvSharp.Point[] square = FindSquare(src);

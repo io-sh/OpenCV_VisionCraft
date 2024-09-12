@@ -10,8 +10,10 @@ using System.Windows.Forms.VisualStyles;
 using System.Windows.Media;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
+using OpenCvSharp.XPhoto;
 using Tesseract;
 using static System.Net.Mime.MediaTypeNames;
+using static ZXing.QrCode.Internal.Mode;
 
 namespace openCV0820
 {
@@ -28,6 +30,17 @@ namespace openCV0820
         string biggestColor;
         string maxColor;
         string coinSize;
+        //얼굴 검출
+        Mat haarface;
+        string filePath;
+        CascadeClassifier faceCascade;
+        //얼굴 데코
+        Mat decoration;
+        Mat decoImage;
+        public OpenCV_action()
+        {
+            filePath = "../../bin/Debug/haarcascade_frontalface_alt/haarcascade_frontalface_alt.xml";
+        }
         public string ColorStr
         {
             get { return colorStr; }
@@ -42,11 +55,6 @@ namespace openCV0820
         {
             card = new Mat();
             OpenCvSharp.Point[] square = openCV_Detection.FindSquare(src);
-            MessageBox.Show(square[0].X+"  "+ square[0].Y + "  "+ square.Length);
-            MessageBox.Show(square[1].X + "  " + square[1].Y + "  " + square.Length);
-            MessageBox.Show(square[2].X + "  " + square[2].Y + "  " + square.Length);
-            MessageBox.Show(square[3].X + "  " + square[3].Y + "  " + square.Length);
-            //OpenCvSharp.Point[][] pts = new OpenCvSharp.Point[][] { square };
             List<Point2f> src_pts = new List<Point2f>()
             {
                 new Point2f(0.0f, 0.0f),
@@ -56,10 +64,6 @@ namespace openCV0820
             };
 
             square = sortPoint(square);
-            MessageBox.Show(square[0].X + "  " + square[0].Y + "  " + square.Length);
-            MessageBox.Show(square[1].X + "  " + square[1].Y + "  " + square.Length);
-            MessageBox.Show(square[2].X + "  " + square[2].Y + "  " + square.Length);
-            MessageBox.Show(square[3].X + "  " + square[3].Y + "  " + square.Length);
             List<Point2f> affine_pts = new List<Point2f>()
             {
                 new Point2f(square[0].X, square[0].Y),
@@ -351,12 +355,194 @@ namespace openCV0820
             else coinSize = "길이 : " + rad.ToString();
         }
 
+        public Mat faceDecter(Mat src)
+        {
+            //고치기
+            using (haarface = new Mat())
+            {
+                Cv2.CopyTo(src, haarface);
+                if (haarface.Channels() != 1) Cv2.CvtColor(haarface, haarface, ColorConversionCodes.RGB2GRAY);
+                Cv2.EqualizeHist(haarface, haarface);
+                using (faceCascade = new CascadeClassifier(filePath))
+                {
+                    //FileStorage Storage = new FileStorage();
+                    OpenCvSharp.Rect[] faces = faceCascade.DetectMultiScale(haarface, scaleFactor: 1.139, minNeighbors: 3);
+                    foreach (var face in faces)
+                    {
+                        Cv2.Rectangle(src, face, new Scalar(0, 0, 255), 2);
+                    }
+                }  
+            }
+            return src;
+        }
+        //원본
+        public Mat faceDecoEar(Mat src, string path)
+        {
+            decoImage = Cv2.ImRead(path, ImreadModes.Unchanged);
+            // src 이미지를 복사하여 decoration을 만듭니다.
+            Mat decoration = src.Clone();
+
+            // 이미지를 회색조로 변환
+            if (decoration.Channels() != 1)
+            {
+                Cv2.CvtColor(decoration, decoration, ColorConversionCodes.BGR2GRAY);
+            }
+            // 히스토그램 평활화
+            Cv2.EqualizeHist(decoration, decoration);
+
+            // 얼굴 탐지기 로드
+            using (var faceCascade = new CascadeClassifier(filePath))
+            {
+                OpenCvSharp.Rect[] faces = faceCascade.DetectMultiScale(decoration, scaleFactor: 1.139, minNeighbors: 2);
+
+                foreach (var face in faces)
+                {
+                    // 얼굴에 맞게 토끼귀 이미지 리사이즈
+                    Mat resizedEar = new Mat();
+                    Cv2.Resize(decoImage, resizedEar, new  OpenCvSharp.Size(face.Width, (int)(face.Height)));//귀 길이
+
+                    // 토끼귀 위치 조정
+                    int earX1 = face.X;//왼
+                    int earY1 = face.Y - resizedEar.Rows- (int)(face.Height * 0.05); // 귀 위치 조정 : 상
+                    int earX2 = earX1 + resizedEar.Cols;//오
+                    int earY2 = earY1 + resizedEar.Rows;//하
+
+                    // 이미지 경계 조정
+                    earX1 = Math.Max(0, earX1);//0보다 작을경우 0
+                    earY1 = Math.Max(0, earY1);
+                    earX2 = Math.Min(src.Cols, earX2);//src보다 클경우 earX2
+                    earY2 = Math.Min(src.Rows, earY2);
+
+                    // 토끼귀 이미지 합성
+                    for (int y = earY1; y < earY2; y++)
+                    {
+                        for (int x = earX1; x < earX2; x++)
+                        {
+                            if (y - earY1 < resizedEar.Rows && x - earX1 < resizedEar.Cols) // 인덱스 범위 체크
+                            {
+                                //Vec4b earPixel: resizedEar 이미지에서 현재 픽셀의 RGBA 값
+                                //Vec4b는 4개의 바이트(각각 Red, Green, Blue, Alpha)를 포함
+                                Vec4b earPixel = resizedEar.At<Vec4b>(y - earY1, x - earX1);//위치에 있는 픽셀의 값을 가져옴
+                                if (earPixel[3] > 0) // 알파 값이 0이 아닌 픽셀만 처리
+                                {
+                                    Vec3b imgPixel = src.At<Vec3b>(y, x);
+
+                                    // 알파 블렌딩
+                                    // 두 개 이상의 이미지를 결합할 때 사용하는 기술로, 각 이미지의 투명도(알파 값)를 고려하여 합성하는 과정
+                                    //이미지의 각 픽셀에서 색상과 투명도를 조절하여 최종 이미지를 생성
+                                    //수식 : 출력 색상=(배경 색상×(255−알파)+전경 색상×알파)/255
+                                    //*전경 : 합성할 이미지
+                                    src.At<Vec3b>(y, x) = new Vec3b(
+                                        (byte)((imgPixel.Item0 * (255 - earPixel[3]) + earPixel[0] * earPixel[3]) / 255),
+                                        (byte)((imgPixel.Item1 * (255 - earPixel[3]) + earPixel[1] * earPixel[3]) / 255),
+                                        (byte)((imgPixel.Item2 * (255 - earPixel[3]) + earPixel[2] * earPixel[3]) / 255)
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    if (resizedEar != null) resizedEar.Dispose();
+                }
+            }
+            return src;
+        }
+        //코드 줄이기
+        public Mat faceDecoPreprocessing(Mat src, string path)
+        {
+            decoImage = Cv2.ImRead(path, ImreadModes.Unchanged);
+            // src 이미지를 복사하여 decoration을 만듭니다.
+            Mat decoration = src.Clone();
+
+            // 이미지를 회색조로 변환
+            if (decoration.Channels() != 1)
+            {
+                Cv2.CvtColor(decoration, decoration, ColorConversionCodes.BGR2GRAY);
+            }
+            // 히스토그램 평활화
+            Cv2.EqualizeHist(decoration, decoration);
+
+            return decoration;
+        }
+        public void AlphaBlending(Mat src, OpenCvSharp.Rect face, double faceWidth, double faceHeight, double FX, double FY, bool up)
+        {
+            //머리
+            Mat resizedEar = new Mat();
+            Cv2.Resize(decoImage, resizedEar, new OpenCvSharp.Size((int)face.Width * faceWidth, (int)face.Height * faceHeight));//머리길이
+
+            //위치 조정
+            int earX1 = face.X - (int)(face.Width * FX);//왼
+            int earY1;
+            if (up) earY1 = face.Y - (int)(face.Height * FY);
+            else earY1 = face.Y + (int)(face.Height * FY);
+            int earX2 = earX1 + resizedEar.Cols;//오
+            int earY2 = earY1 + resizedEar.Rows;//하
+
+            // 이미지 경계 조정
+            earX1 = Math.Max(0, earX1);//0보다 작을경우 0
+            earY1 = Math.Max(0, earY1);
+            earX2 = Math.Min(src.Cols, earX2);//src보다 클경우 earX2
+            earY2 = Math.Min(src.Rows, earY2);
+
+            //이미지 합성
+            for (int y = earY1; y < earY2; y++)
+            {
+                for (int x = earX1; x < earX2; x++)
+                {
+                    if (y - earY1 < resizedEar.Rows && x - earX1 < resizedEar.Cols) // 인덱스 범위 체크
+                    {
+                        //Vec4b earPixel: resizedEar 이미지에서 현재 픽셀의 RGBA 값
+                        //Vec4b는 4개의 바이트(각각 Red, Green, Blue, Alpha)를 포함
+                        Vec4b earPixel = resizedEar.At<Vec4b>(y - earY1, x - earX1);//위치에 있는 픽셀의 값을 가져옴
+                        if (earPixel[3] > 0) // 알파 값이 0이 아닌 픽셀만 처리
+                        {
+                            Vec3b imgPixel = src.At<Vec3b>(y, x);
+
+                            // 알파 블렌딩
+                            // 두 개 이상의 이미지를 결합할 때 사용하는 기술로, 각 이미지의 투명도(알파 값)를 고려하여 합성하는 과정
+                            //이미지의 각 픽셀에서 색상과 투명도를 조절하여 최종 이미지를 생성
+                            //수식 : 출력 색상=(배경 색상×(255−알파)+전경 색상×알파)/255
+                            //*전경 : 합성할 이미지
+                            src.At<Vec3b>(y, x) = new Vec3b(
+                                (byte)((imgPixel.Item0 * (255 - earPixel[3]) + earPixel[0] * earPixel[3]) / 255),
+                                (byte)((imgPixel.Item1 * (255 - earPixel[3]) + earPixel[1] * earPixel[3]) / 255),
+                                (byte)((imgPixel.Item2 * (255 - earPixel[3]) + earPixel[2] * earPixel[3]) / 255)
+                            );
+                        }
+                    }
+                }
+            }
+            if (resizedEar != null) resizedEar.Dispose();
+        }
+
+        //긴머리, 대머리
+        //인수 원본, 전경 이미지 위치, 전경 가로, 전경 세로, 전경 시작좌표 X, Y, 머리 위?
+        public Mat faceDeco(Mat src, string path, double faceWidth, double faceHeight, double FX, double FY, bool up)
+        {
+            decoration = faceDecoPreprocessing(src, path);
+
+            // 얼굴 탐지기 로드
+            using (var faceCascade = new CascadeClassifier(filePath))
+            {
+                OpenCvSharp.Rect[] faces = faceCascade.DetectMultiScale(decoration, scaleFactor: 1.139, minNeighbors: 2);
+
+                foreach (var face in faces)
+                {
+                    //인수(원본, 전경, 가로, 세로, 시작좌표 x, y, 머리 위?)
+                    AlphaBlending(src, face, faceWidth, faceHeight, FX, FY, up);
+                }
+            }
+            return src;
+        }
+
         public void Dispose()
         {
             if (card != null) { card.Dispose(); }
             if(circle != null) { circle.Dispose(); }
             if(coin != null) { coin.Dispose(); }
             if(affine != null ) { affine.Dispose(); }
+            if (haarface != null) { haarface.Dispose(); }
+            if(decoration != null) { decoration.Dispose(); }
+            if(decoImage != null) { decoImage.Dispose(); }
         }
     }
 }
