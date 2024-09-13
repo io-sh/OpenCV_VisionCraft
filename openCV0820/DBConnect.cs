@@ -45,9 +45,7 @@ namespace openCV0820
                 dataAdapter = new SqlDataAdapter();
                 dt = new DataTable();
                 dataSet = new DataSet();
-
                 if (conn.State != ConnectionState.Open) conn.Open();
-
                 string queryString = "INSERT INTO Table_2 (company, product, place, yearMonth)" +
                     "VALUES (@company, @product, @place, @yearMonth)";
 
@@ -65,7 +63,6 @@ namespace openCV0820
                 dataSet.Clear();
                 dataAdapter.Fill(dataSet, "Table_2");
                 dt = dataSet.Tables["Table_2"];
-
             }
             catch (Exception ex)
             {
@@ -76,7 +73,6 @@ namespace openCV0820
                 conn.Close();
                 dataAdapter.InsertCommand.Dispose();
             }
-
         }
 
         public void select(string company)

@@ -1016,20 +1016,13 @@ namespace openCV0820
                         {
                             string rt = result.Text; // EAN-13 바코드 문자열
                             int len = rt.Length;
-
-                            if (len != 13)
-                            {
-                                throw new ArgumentException("EAN-13 바코드는 13자리 숫자로 구성되어야 합니다.");
-                            }
-
+                            if (len != 13) MessageBox.Show("EAN-13 바코드는 13자리 숫자로 구성되어야 합니다.");
                             int sumOdd = 0; // 홀수 자리 숫자의 합
                             int sumEven = 0; // 짝수 자리 숫자의 합
-
                             // 홀수 및 짝수 자리에 있는 숫자 합산 (1-based index 기준)
                             for (int j = 0; j < len - 1; j++)
                             {
                                 int digit = int.Parse(rt[j].ToString());
-
                                 if (j % 2 == 0) // 0-based index에서 홀수 자리에 해당 (1, 3, 5, ...)
                                 {
                                     sumOdd += digit;
@@ -1039,17 +1032,13 @@ namespace openCV0820
                                     sumEven += digit;
                                 }
                             }
-
                             // 홀수 자리 합에 3을 곱하고, 짝수 자리 합과 더함
                             int total = sumOdd + (sumEven * 3);
-
                             // 총합을 10으로 나눈 나머지를 구하고, 체크디지트 계산
                             int remainder = total % 10;
                             int checkDigit = (10 - remainder) % 10;
-
                             // 실제 체크디지트 (마지막 자리 숫자) 추출
                             int actualCheckDigit = int.Parse(rt.Substring(len - 1, 1));
-
                             // 체크디지트 검증
                             luhn = (checkDigit == actualCheckDigit);
                         }

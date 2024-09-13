@@ -305,7 +305,8 @@ namespace openCV0820
             CircleSegment[] circles = Cv2.HoughCircles(circle, HoughModes.Gradient, 1, 100, 100, 35, 0, 0);
             for (int i = 0; i < circles.Length; i++)
             {
-                OpenCvSharp.Point center = new OpenCvSharp.Point(circles[i].Center.X- circles[i].Radius, circles[i].Center.Y- circles[i].Radius);
+                OpenCvSharp.Point center = new OpenCvSharp.Point(circles[i].Center.X- circles[i].Radius, 
+                    circles[i].Center.Y- circles[i].Radius);
                 Mat area = new Mat(src, new OpenCvSharp.Rect((int)(circles[i].Center.X - circles[i].Radius / 2),
                                                     (int)(circles[i].Center.Y - circles[i].Radius / 2),
                                                     (int)(circles[i].Radius),
@@ -354,7 +355,6 @@ namespace openCV0820
 
         public Mat faceDecter(Mat src)
         {
-            //고치기
             using (haarface = new Mat())
             {
                 Cv2.CopyTo(src, haarface);
@@ -362,7 +362,6 @@ namespace openCV0820
                 Cv2.EqualizeHist(haarface, haarface);
                 using (faceCascade = new CascadeClassifier(filePath))
                 {
-                    //FileStorage Storage = new FileStorage();
                     OpenCvSharp.Rect[] faces = faceCascade.DetectMultiScale(haarface, scaleFactor: 1.139, minNeighbors: 3);
                     foreach (var face in faces)
                     {
@@ -445,57 +444,52 @@ namespace openCV0820
         }
         //코드 줄이기
         public Mat faceDecoPreprocessing(Mat src, string path)
-        {
-            decoImage = Cv2.ImRead(path, ImreadModes.Unchanged);
-            // src 이미지를 복사하여 decoration을 만듭니다.
-            Mat decoration = src.Clone();
-
-            // 이미지를 회색조로 변환
-            if (decoration.Channels() != 1)
+        {           
+            decoImage = Cv2.ImRead(path, ImreadModes.Unchanged);//알파값을 받기 위해 unchanged
+            Mat decoration = src.Clone();// src 이미지를 복사하여 decoration을 만듬
+            if (decoration.Channels() != 1)// 이미지를 회색조로 변환
             {
                 Cv2.CvtColor(decoration, decoration, ColorConversionCodes.BGR2GRAY);
             }
-            // 히스토그램 평활화
-            Cv2.EqualizeHist(decoration, decoration);
-
+            Cv2.EqualizeHist(decoration, decoration);// 히스토그램 평활화
             return decoration;
         }
-        public void AlphaBlending(Mat src, OpenCvSharp.Rect face, double faceWidth, double faceHeight, double FX, double FY, bool up)
+        public void AlphaBlending(Mat src, OpenCvSharp.Rect face, 
+            double faceWidth, double faceHeight, double FX, double FY, bool up)
         {
-            //머리
-            Mat resizedEar = new Mat();
-            Cv2.Resize(decoImage, resizedEar, new OpenCvSharp.Size((int)face.Width * faceWidth, (int)face.Height * faceHeight));//머리길이
-
+            Mat resizedEar = new Mat();//머리
+            Cv2.Resize(decoImage, resizedEar, new OpenCvSharp.Size(
+                (int)face.Width * faceWidth, (int)face.Height * faceHeight));//머리길이
             //위치 조정
             int earX1 = face.X - (int)(face.Width * FX);//왼
-            int earY1;
+            int earY1;//위
             if (up) earY1 = face.Y - (int)(face.Height * FY);
             else earY1 = face.Y + (int)(face.Height * FY);
             int earX2 = earX1 + resizedEar.Cols;//오
             int earY2 = earY1 + resizedEar.Rows;//하
-
             // 이미지 경계 조정
             earX1 = Math.Max(0, earX1);//0보다 작을경우 0
             earY1 = Math.Max(0, earY1);
             earX2 = Math.Min(src.Cols, earX2);//src보다 클경우 earX2
             earY2 = Math.Min(src.Rows, earY2);
-
             //이미지 합성
             for (int y = earY1; y < earY2; y++)
             {
                 for (int x = earX1; x < earX2; x++)
                 {
-                    if (y - earY1 < resizedEar.Rows && x - earX1 < resizedEar.Cols) // 인덱스 범위 체크
+                    // 인덱스 범위 체크
+                    if (y - earY1 < resizedEar.Rows && x - earX1 < resizedEar.Cols) 
                     {
                         //Vec4b earPixel: resizedEar 이미지에서 현재 픽셀의 RGBA 값
                         //Vec4b는 4개의 바이트(각각 Red, Green, Blue, Alpha)를 포함
-                        Vec4b earPixel = resizedEar.At<Vec4b>(y - earY1, x - earX1);//위치에 있는 픽셀의 값을 가져옴
+                        //위치에 있는 픽셀의 값을 가져옴
+                        Vec4b earPixel = resizedEar.At<Vec4b>(y - earY1, x - earX1);
                         if (earPixel[3] > 0) // 알파 값이 0이 아닌 픽셀만 처리
                         {
                             Vec3b imgPixel = src.At<Vec3b>(y, x);
-
                             // 알파 블렌딩
-                            // 두 개 이상의 이미지를 결합할 때 사용하는 기술로, 각 이미지의 투명도(알파 값)를 고려하여 합성하는 과정
+                            // 두 개 이상의 이미지를 결합할 때 사용하는 기술로 - 
+                            // - 각 이미지의 투명도(알파 값)를 고려하여 합성하는 과정
                             //이미지의 각 픽셀에서 색상과 투명도를 조절하여 최종 이미지를 생성
                             //수식 : 출력 색상=(배경 색상×(255−알파)+전경 색상×알파)/255
                             //*전경 : 합성할 이미지
@@ -508,24 +502,21 @@ namespace openCV0820
                     }
                 }
             }
-            if (resizedEar != null) resizedEar.Dispose();
+            if (resizedEar != null) resizedEar.Dispose();//메모리 해제
         }
 
-        //긴머리, 대머리
-        //인수 원본, 전경 이미지 위치, 전경 가로, 전경 세로, 전경 시작좌표 X, Y, 머리 위?
+        
         public Mat faceDeco(Mat src, string path, double faceWidth, double faceHeight, double FX, double FY, bool up)
         {
-            decoration = faceDecoPreprocessing(src, path);
-
-            // 얼굴 탐지기 로드
-            using (var faceCascade = new CascadeClassifier(filePath))
+            //인수 원본, 전경 이미지 위치, 전경 가로, 전경 세로, 전경 시작좌표 X, Y, 머리 위?
+            decoration = faceDecoPreprocessing(src, path);//이미지 전처리
+            using (var faceCascade = new CascadeClassifier(filePath))// 얼굴 탐지기 로드
             {
                 OpenCvSharp.Rect[] faces = faceCascade.DetectMultiScale(decoration, scaleFactor: 1.139, minNeighbors: 2);
-
                 foreach (var face in faces)
                 {
                     //인수(원본, 전경, 가로, 세로, 시작좌표 x, y, 머리 위?)
-                    AlphaBlending(src, face, faceWidth, faceHeight, FX, FY, up);
+                    AlphaBlending(src, face, faceWidth, faceHeight, FX, FY, up);//알파블랜딩
                 }
             }
             return src;
